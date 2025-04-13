@@ -31,9 +31,9 @@ pipeline {
         stage('Test Docker Container') {
             steps {
                 // Lancer le conteneur pour tester sur un port différent
-                bat "docker run --name test-container -d -p 8083:8081 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker run --name test-container -d -p 8083:<application_port> ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 // Attendre quelques secondes pour que le conteneur démarre
-                bat "ping -n 10 127.0.0.1 > nul"
+                bat "ping -n 30 127.0.0.1 > nul"
                 // Vérifier si l'application répond
                 bat "curl -f http://localhost:8083/api/v1/items || exit 1"
             }
