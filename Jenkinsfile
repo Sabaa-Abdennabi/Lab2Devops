@@ -17,31 +17,31 @@ pipeline {
         stage('Build Maven Project') {
             steps {
                 // Construire le projet avec Maven
-                sh './mvnw clean package -DskipTests'
+                bat './mvnw clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 // Construire l'image Docker
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
 
         stage('Test Docker Container') {
             steps {
                 // Lancer le conteneur pour tester
-                sh "docker run --name test-container -d -p 8082:8081 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker run --name test-container -d -p 8082:8081 ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 // Attendre quelques secondes pour que le conteneur démarre
-                sh "sleep 10"
+                bat "sleep 10"
                 // Vérifier si l'application répond
-                sh "curl -f http://localhost:8082/api/v1/items || exit 1"
+                bat "curl -f http://localhost:8082/api/v1/items || exit 1"
             }
             post {
                 always {
                     // Arrêter et supprimer le conteneur après les tests
-                    sh "docker stop test-container || true"
-                    sh "docker rm test-container || true"
+                    bat "docker stop test-container || true"
+                    bat "docker rm test-container || true"
                 }
             }
         }
@@ -50,10 +50,10 @@ pipeline {
             steps {
                 // Pousser l'image Docker vers un registre (par exemple Docker Hub)
                 withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKER_PASSWORD')]) {
-                    sh "echo $DOCKER_PASSWORD | docker login -u sabaaabn --password-stdin"
+                    bat "echo $DOCKER_PASSWORD | docker login -u sabaaabn --password-stdin"
                 }
-                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} sabaaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
-                sh "docker push sabaaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} sabaaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker push sabaaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
     }
@@ -61,7 +61,7 @@ pipeline {
     post {
         always {
             // Nettoyer les conteneurs et images Docker inutilisés
-            sh "docker system prune -f || true"
+            bat "docker system prune -f || true"
         }
     }
 }
