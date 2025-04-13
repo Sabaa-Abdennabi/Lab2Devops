@@ -30,12 +30,12 @@ pipeline {
 
         stage('Test Docker Container') {
             steps {
-                // Lancer le conteneur pour tester
-                bat "docker run --name test-container -d -p 8082:8081 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                // Lancer le conteneur pour tester sur un port différent
+                bat "docker run --name test-container -d -p 8083:8081 ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 // Attendre quelques secondes pour que le conteneur démarre
-                bat "sleep 10"
+                bat "timeout 10"
                 // Vérifier si l'application répond
-                bat "curl -f http://localhost:8082/api/v1/items || exit 1"
+                bat "curl -f http://localhost:8083/api/v1/items || exit 1"
             }
             post {
                 always {
