@@ -44,14 +44,14 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                // Pousser l'image Docker vers un registre (par exemple Docker Hub)
-                withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKER_PASSWORD')]) {
-                    bat "echo $DOCKER_PASSWORD | docker login -u sabaaabn --password-stdin"
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
+                    bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} %DOCKER_USER%/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    bat "docker push %DOCKER_USER%/${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
-                bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} sabaaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
-                bat "docker push sabaaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
+
     }
 
     post {
