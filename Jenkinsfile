@@ -45,7 +45,7 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
+                    withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker', url: 'https://index.docker.io/v1/') {
                         // Build the Docker image
                         bat "docker build -t ob-item-service:latest ."
                         // Tag the Docker image
