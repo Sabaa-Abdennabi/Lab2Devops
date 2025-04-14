@@ -47,11 +47,11 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
                         // Build the Docker image
-                        bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                        bat "docker build -t ${DOCKER_IMAGE}:latest ."
                         // Tag the Docker image
-                        bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} sabaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        bat "docker tag ${DOCKER_IMAGE}:latest sabaabn/${DOCKER_IMAGE}:latest"
                         // Push the Docker image
-                        bat "docker push sabaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        bat "docker push sabaabn/${DOCKER_IMAGE}:latest"
                     }
                 }
             }
