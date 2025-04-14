@@ -49,7 +49,7 @@ pipeline {
                         // Build the Docker image
                         bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                         // Tag the Docker image
-                        bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} %DOCKER_USER%/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} sabaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
                         // Push the Docker image
                         bat "docker push sabaabn/${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
