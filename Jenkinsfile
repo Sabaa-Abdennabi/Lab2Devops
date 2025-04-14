@@ -42,26 +42,20 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-        steps {
-            withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                // Use PowerShell for Docker login
-                powershell """
-                \$env:DOCKER_USER = '${DOCKER_USER}'
-                \$env:DOCKER_PASS = '${DOCKER_PASS}'
-                echo \$env:DOCKER_PASS | docker login -u \$env:DOCKER_USER --password-stdin
-                """
-                // Tag the Docker image
-                powershell """
-                docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} \$env:DOCKER_USER/${DOCKER_IMAGE}:${DOCKER_TAG}
-                """
-                // Push the Docker image
-                powershell """
-                docker push \$env:DOCKER_USER/${DOCKER_IMAGE}:${DOCKER_TAG}
-                """
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
+                        // Build the Docker image
+                        bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                        // Tag the Docker image
+                        bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} %DOCKER_USER%/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        // Push the Docker image
+                        bat "docker push %DOCKER_USER%/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    }
+                }
             }
         }
-    }
 
     }
 
